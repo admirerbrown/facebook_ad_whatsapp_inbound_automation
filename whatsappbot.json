@@ -1,0 +1,1441 @@
+{
+  "name": "whatsappbot",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "whatsapp",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -336,
+        48
+      ],
+      "id": "c6b5d97c-6ac1-456d-afd2-d247b03a612d",
+      "name": "Webhook",
+      "webhookId": "b9b68263-b53b-4582-ad52-563543a47482"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "31915d7a-c2e7-405f-b830-da46eadd0ebd",
+              "leftValue": "={{ $json.body.data.key.fromMe }}",
+              "rightValue": false,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -128,
+        48
+      ],
+      "id": "592e344b-cbff-4883-b985-dae47a3e0616",
+      "name": "Filter: Incoming Only"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1Y9Pjl73fWvi-qUiKzlJ96_a3Rdv4wp4YzBn6FefPbxQ",
+          "mode": "list"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 2076594074,
+          "mode": "list",
+          "cachedResultName": "Leads",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Y9Pjl73fWvi-qUiKzlJ96_a3Rdv4wp4YzBn6FefPbxQ/edit#gid=2076594074"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Phone",
+              "lookupValue": "={{ $json.phone }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        320,
+        64
+      ],
+      "id": "dae7e4fa-38e9-426c-9410-43416f4bd16f",
+      "name": "lookup lead",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "Ed50FVZjJ7k0GKIR",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "5567d892-7fba-4bf0-bf80-dd634bc3af81",
+              "leftValue": "={{ $json.Phone }}",
+              "rightValue": "",
+              "operator": {
+                "type": "number",
+                "operation": "empty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        528,
+        64
+      ],
+      "id": "85ea40b3-a62c-421b-9e07-5123fb6df1ed",
+      "name": "new or returning lead"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1Y9Pjl73fWvi-qUiKzlJ96_a3Rdv4wp4YzBn6FefPbxQ",
+          "mode": "list",
+          "cachedResultName": "WhatsApp_Lead_Automation_v2",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Y9Pjl73fWvi-qUiKzlJ96_a3Rdv4wp4YzBn6FefPbxQ/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 2076594074,
+          "mode": "list",
+          "cachedResultName": "Leads",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Y9Pjl73fWvi-qUiKzlJ96_a3Rdv4wp4YzBn6FefPbxQ/edit#gid=2076594074"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Phone": "={{ $('extract_fields').item.json.phone }}",
+            "Date": "={{ $('extract_fields').item.json.DateTime }}",
+            "WA Display Name": "={{ $('extract_fields').item.json.name }}",
+            "Ad Link": "={{ $('extract_fields').item.json.fb_adlink }}",
+            "Source": "={{ $('extract_fields').item.json.msg_source }}",
+            "Ad Image": "={{ $('extract_fields').item.json.product_image }}",
+            "Interested Product": "={{ $('extract_fields').item.json.product_text }}",
+            "Current Step": "welcome"
+          },
+          "matchingColumns": [
+            "Phone"
+          ],
+          "schema": [
+            {
+              "id": "Phone",
+              "displayName": "Phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Real Name",
+              "displayName": "Real Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "WA Display Name",
+              "displayName": "WA Display Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Source",
+              "displayName": "Source",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Interested Product",
+              "displayName": "Interested Product",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Interested Quantity",
+              "displayName": "Interested Quantity",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Discount Given",
+              "displayName": "Discount Given",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Ad Link",
+              "displayName": "Ad Link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Ad Image",
+              "displayName": "Ad Image",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Current Step",
+              "displayName": "Current Step",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Tags",
+              "displayName": "Tags",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Colour(s)",
+              "displayName": "Colour(s)",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Size",
+              "displayName": "Size",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "City",
+              "displayName": "City",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Outside Accra OK",
+              "displayName": "Outside Accra OK",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Location Pin",
+              "displayName": "Location Pin",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Wants More Images",
+              "displayName": "Wants More Images",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Score",
+              "displayName": "Score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Ready to Buy",
+              "displayName": "Ready to Buy",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Manual Override",
+              "displayName": "Manual Override",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Override Until",
+              "displayName": "Override Until",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Date",
+              "displayName": "Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        528,
+        -96
+      ],
+      "id": "951f2d11-f4b9-48f2-8b14-d396a7cc4798",
+      "name": "create new lead",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "Ed50FVZjJ7k0GKIR",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const input = $input.first().json;\n// Handle different n8n input structures (direct or nested in body)\nconst payload = input.body || input;\nconst data = payload.data || {};\nconst contextInfo = data.contextInfo || {};\nconst adReply = contextInfo.externalAdReply || null;\n\nconst mimetype = \n  data.message?.imageMessage?.mimetype ||\n  data.message?.videoMessage?.mimetype ||\n  data.message?.audioMessage?.mimetype ||\n  data.message?.documentMessage?.mimetype || '';\n\nconst isMedia = mimetype !== '';\n\n// Core Identifiers\nconst phone = data.key?.remoteJid?.replace('@s.whatsapp.net', '') || 'unknown';\nconst name = data.pushName || ''; // Keep empty to trigger 'Lead' fallback below\nconst messageType = data.messageType || 'unknown';\nconst msg_text = data.message?.conversation || data.message?.extendedTextMessage?.text || '';\n\n// Ad-specific variables (Only populated if adReply exists)\nlet source = adReply?.sourceType || '';\nlet product_text = adReply?.body || '';\nlet product_image = adReply?.thumbnailUrl || adReply?.originalImageUrl || '';\nlet fb_adlink = adReply?.sourceUrl || '';\n\n// Block anything that isn't text or media we can handle\nconst shouldProcess = \n  data.messageType === 'conversation' ||\n  data.messageType === 'extendedTextMessage' ||\n  isMedia;\n\nif (!shouldProcess) return [];\n\nreturn [{\n  json: {\n    phone,\n    name: (name === '' || !name) ? 'Lead' : name,\n    msg_source: (source === '' || !source) ? 'organic' : source,\n    msg_text,\n    messageType,\n    product_text,\n    isMedia: isMedia,\n    mimetype: mimetype,\n    fb_adlink,\n    product_image,\n    // Safely grab the date from the root payload\n    DateTime: payload.date_time || new Date().toISOString()\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        128,
+        64
+      ],
+      "id": "f25194e2-d361-4767-a863-ad08ec76ccd0",
+      "name": "extract_fields"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1Y9Pjl73fWvi-qUiKzlJ96_a3Rdv4wp4YzBn6FefPbxQ",
+          "mode": "list",
+          "cachedResultName": "WhatsApp_Lead_Automation_v2",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Y9Pjl73fWvi-qUiKzlJ96_a3Rdv4wp4YzBn6FefPbxQ/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 2076594074,
+          "mode": "list",
+          "cachedResultName": "Leads",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Y9Pjl73fWvi-qUiKzlJ96_a3Rdv4wp4YzBn6FefPbxQ/edit#gid=2076594074"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Interested Product": "={{ $('If1').item.json.ai_response.product || $('lookup lead').item.json['Interested Product'] }}",
+            "Current Step": "={{ $('If1').item.json.ai_response.next_step }}",
+            "Phone": "={{ $('extract_fields').item.json.phone }}",
+            "Colour(s)": "={{ $('If1').item.json.ai_response.color || $('lookup lead').item.json['Colour(s)'] }}",
+            "Size": "={{ $('If1').item.json.ai_response.size || $('lookup lead').item.json['Size'] }}",
+            "Outside Accra OK": "={{ $('If1').item.json.ai_response.outside_accra || $('lookup lead').item.json['Outside Accra OK'] }}",
+            "Discount Given": "= {{ $('If1').item.json.ai_response.discount_requested || $('lookup lead').item.json['Discount Given'] }}",
+            "City": "={{ $('If1').item.json.ai_response.city || $('lookup lead').item.json['City'] }}",
+            "Location Pin": "={{ $('If1').item.json.ai_response.location_received || $('lookup lead').item.json['Location Pin'] }}",
+            "Real Name": "={{ $('If1').item.json.ai_response.name || '' }}"
+          },
+          "matchingColumns": [
+            "Phone"
+          ],
+          "schema": [
+            {
+              "id": "Phone",
+              "displayName": "Phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Real Name",
+              "displayName": "Real Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "WA Display Name",
+              "displayName": "WA Display Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Source",
+              "displayName": "Source",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Interested Product",
+              "displayName": "Interested Product",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Interested Quantity",
+              "displayName": "Interested Quantity",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Discount Given",
+              "displayName": "Discount Given",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Ad Link",
+              "displayName": "Ad Link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Ad Image",
+              "displayName": "Ad Image",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Current Step",
+              "displayName": "Current Step",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Tags",
+              "displayName": "Tags",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Colour(s)",
+              "displayName": "Colour(s)",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Size",
+              "displayName": "Size",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "City",
+              "displayName": "City",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Outside Accra OK",
+              "displayName": "Outside Accra OK",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Location Pin",
+              "displayName": "Location Pin",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Wants More Images",
+              "displayName": "Wants More Images",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Score",
+              "displayName": "Score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Ready to Buy",
+              "displayName": "Ready to Buy",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Manual Override",
+              "displayName": "Manual Override",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Override Until",
+              "displayName": "Override Until",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Date",
+              "displayName": "Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1552,
+        80
+      ],
+      "id": "13932a72-2154-46a6-a675-6af420354691",
+      "name": "update leads-sheet",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "Ed50FVZjJ7k0GKIR",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "messages-api",
+        "instanceName": "={{ $('Filter: Incoming Only').item.json.body.instance }}",
+        "remoteJid": "={{ $('Filter: Incoming Only').item.json.body.data.key.remoteJid }}",
+        "messageText": "={{ $json.output }}",
+        "options_message": {
+          "delay": 1200
+        }
+      },
+      "type": "n8n-nodes-evolution-api.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        1312,
+        80
+      ],
+      "id": "9f3becae-65f5-49f4-96ea-a4b0b4e3b62e",
+      "name": "reply customer",
+      "credentials": {
+        "evolutionApi": {
+          "id": "cKFCK1Ny5MU5xav0",
+          "name": "Evolution account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('extract_fields').first().json.msg_text }}",
+        "options": {
+          "systemMessage": "=You are the IvoryGlitch WhatsApp Sales Agent.\n\nYou must use tools on every message. Follow these steps in order:\n\n1. Call leadSheet_tool to get the lead using their phone number\n2. Read \"Current Step\" from the result\n3. Call messageSheet to get the message template for that Current Step\n4. Determine what value the customer just provided based on their message and the Current Step:\n   - If Current Step is ask_colour → customer provided color\n   - If Current Step is ask_city → customer provided city\n   - If Current Step is ask_size → customer provided size\n   - If Current Step is ask_quantity → customer provided quantity\n   - If Current Step is ask_name → customer provided name\n5. Call update_lead_tool to save:\n   - The captured value to the correct column\n   - The next step to \"Current Step\" column\n6. Return ONLY the template message text. Nothing else.\n\nSTEP SEQUENCE:\nwelcome → ask_colour → ask_city → outside_accra (if not Accra) → ask_size → ask_quantity → ask_location → ask_name → order_summary\n\nCRITICAL: You MUST call update_lead after EVERY message without exception.\nIf you do not call update_lead, you have failed your task.\nEven if the customer says something unrelated, still call update_lead \nwith the current step unchanged.\n\nNEXT STEP MAP:\nwelcome → next is ask_colour\nask_colour → next is ask_city\nask_city → next is outside_accra (if city is not Accra) or ask_size (if Accra)\noutside_accra → next is ask_size (if yes) or outside_accra_no (if no)\nask_size → next is ask_quantity\nask_quantity → next is ask_location\nask_location → next is ask_name\nask_name → next is order_summary\n\nRULES:\n- Never skip calling update_lead_tool\n- Never answer from your own knowledge\n- Never invent messages\n- Always use tools\n- Return ONLY the WhatsApp message text",
+          "maxIterations": 10
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        912,
+        80
+      ],
+      "id": "402f2cca-a31c-46e8-8a87-e773a2f81c79",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "openai/gpt-4.1",
+          "mode": "list",
+          "cachedResultName": "openai/gpt-4.1"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        912,
+        -96
+      ],
+      "id": "dca7a159-d349-4a01-9b65-303ba8941b6e",
+      "name": "OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "2xKhGsi4KKgSPozs",
+          "name": "OpenAi account with pat"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Use this tool to get the WhatsApp message template.You need the 'Current Step' from here to know which template to use.",
+        "documentId": {
+          "__rl": true,
+          "value": "1Y9Pjl73fWvi-qUiKzlJ96_a3Rdv4wp4YzBn6FefPbxQ",
+          "mode": "list",
+          "cachedResultName": "WhatsApp_Lead_Automation_v2",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Y9Pjl73fWvi-qUiKzlJ96_a3Rdv4wp4YzBn6FefPbxQ/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 681467353,
+          "mode": "list",
+          "cachedResultName": "Messages",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Y9Pjl73fWvi-qUiKzlJ96_a3Rdv4wp4YzBn6FefPbxQ/edit#gid=681467353"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Step",
+              "lookupValue": "={{ $json['Current Step'] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        896,
+        288
+      ],
+      "id": "448b28bf-a3bf-4a8a-98f7-b72e494cbb0c",
+      "name": "messageSheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "Ed50FVZjJ7k0GKIR",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Use this to look up the lead's current progress and saved details. You need the 'Current Step' from here to know which template to use.",
+        "documentId": {
+          "__rl": true,
+          "value": "1Y9Pjl73fWvi-qUiKzlJ96_a3Rdv4wp4YzBn6FefPbxQ",
+          "mode": "list",
+          "cachedResultName": "WhatsApp_Lead_Automation_v2",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Y9Pjl73fWvi-qUiKzlJ96_a3Rdv4wp4YzBn6FefPbxQ/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 2076594074,
+          "mode": "list",
+          "cachedResultName": "Leads",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Y9Pjl73fWvi-qUiKzlJ96_a3Rdv4wp4YzBn6FefPbxQ/edit#gid=2076594074"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Phone",
+              "lookupValue": "={{ $('extract_fields').item.json.phone }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        1056,
+        -96
+      ],
+      "id": "cf0b52bd-0c80-4a77-9f66-fe98cede993d",
+      "name": "leadSheet_tool",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "Ed50FVZjJ7k0GKIR",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "moonshotai/kimi-k2-instruct",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        912,
+        -256
+      ],
+      "id": "6eb58b7f-a8b0-40a6-a1b0-b711ff4aa7a0",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "BoXjiShuwZ8Tz8b3",
+          "name": "Groq account"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Use this to save new information (Size, Color, City, Name) and to advance the 'Current Step' to the next phase.",
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1Y9Pjl73fWvi-qUiKzlJ96_a3Rdv4wp4YzBn6FefPbxQ",
+          "mode": "list",
+          "cachedResultName": "WhatsApp_Lead_Automation_v2",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Y9Pjl73fWvi-qUiKzlJ96_a3Rdv4wp4YzBn6FefPbxQ/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 2076594074,
+          "mode": "list",
+          "cachedResultName": "Leads",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Y9Pjl73fWvi-qUiKzlJ96_a3Rdv4wp4YzBn6FefPbxQ/edit#gid=2076594074"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Real Name": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Real_Name', `The customer's actual name provided during the ask_name step.`, 'string') }}",
+            "Interested Product": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Interested_Product', `The specific clothing item they are buying (e.g., \"Vintage Shirt\").`, 'string') }}",
+            "Interested Quantity": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Interested_Quantity', `The number of units requested as an integer (e.g., 2).`, 'string') }}",
+            "Discount Given": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Discount_Given', `set to yes if the person complains about the price or asks for a reduction in the price`, 'string') }}",
+            "Ad Link": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Ad_Link', ``, 'string') }}",
+            "Ready to Buy": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Ready_to_Buy', `Consider the number of steps completed and decide whether this is ready to buy or just enquiring`, 'string') }}",
+            "Status": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Status', `General status of the lead (e.g., \"In Progress\", \"Completed\", \"Abandoned\").`, 'string') }}",
+            "Score": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Score', `IvoryGlitch Menswear — Lead Scoring Rules\t\t\nn8n uses these rules to auto-tag every lead at the end of the conversation\t\t\nCriteria\tPoints\tNotes\nReal name provided\t1\tBot asks 'What's your name?'\nColour(s) selected\t1\tBot asks colour preference\nSize selected\t1\tBot asks size\nQuantity provided\t1\tBot asks how many units\nCity confirmed as Accra\t1\tBot asks city\nWhatsApp location pin sent\t1\tBot requests location pin\n\n\nStatus Tags\t\t\nScore = 6 (all criteria met)\tReady to Buy\t\nScore = 4 or 5 (at most 2 missing)\tFollow Up\t\nScore ≤ 3\tEnquiring\t\nConfirmed order + paid\tCustomer\t`, 'string') }}",
+            "Wants More Images": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Wants_More_Images', `Set to \"Yes\" if they ask to see more images or samples of the item, otherwise \"No\".`, 'string') }}",
+            "Location Pin": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Location_Pin', `Set to \"Received\" if they send their WhatsApp location pin`, 'string') }}",
+            "Outside Accra OK": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Outside_Accra_OK', `Set to \"Yes\" if they agree to prepayment, or \"No\" if they refuse.`, 'string') }}",
+            "City": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('City', `The city they are ordering from (e.g., \"Accra\", \"Kumasi\")`, 'string') }}",
+            "Size": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Size', `The size they chose (S, M, L, XL, XXL).`, 'string') }}",
+            "Colour(s)": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Colour_s_', `The colors they want. If they sent a photo, set this to \"Image Received\"`, 'string') }}",
+            "Current Step": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Current_Step', `CRITICAL: The name of the NEXT step they just moved into (e.g., ask_size).`, 'string') }}",
+            "Phone": "={{ $json.Phone }}"
+          },
+          "matchingColumns": [
+            "Phone"
+          ],
+          "schema": [
+            {
+              "id": "Phone",
+              "displayName": "Phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Real Name",
+              "displayName": "Real Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "WA Display Name",
+              "displayName": "WA Display Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Source",
+              "displayName": "Source",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Interested Product",
+              "displayName": "Interested Product",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Interested Quantity",
+              "displayName": "Interested Quantity",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Discount Given",
+              "displayName": "Discount Given",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Ad Link",
+              "displayName": "Ad Link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Ad Image",
+              "displayName": "Ad Image",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Current Step",
+              "displayName": "Current Step",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Tags",
+              "displayName": "Tags",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Colour(s)",
+              "displayName": "Colour(s)",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Size",
+              "displayName": "Size",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "City",
+              "displayName": "City",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Outside Accra OK",
+              "displayName": "Outside Accra OK",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Location Pin",
+              "displayName": "Location Pin",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Wants More Images",
+              "displayName": "Wants More Images",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Score",
+              "displayName": "Score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Ready to Buy",
+              "displayName": "Ready to Buy",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Manual Override",
+              "displayName": "Manual Override",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Override Until",
+              "displayName": "Override Until",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Date",
+              "displayName": "Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        1056,
+        288
+      ],
+      "id": "3413890e-98d1-4d3d-8f90-1c5de687a774",
+      "name": "update_lead",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "Ed50FVZjJ7k0GKIR",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "accept": "application/json, text/plain, */*",
+            "content-type": "application/json",
+            "user-agent": "axios/1.13.2",
+            "content-length": "1433",
+            "accept-encoding": "gzip, compress, deflate, br",
+            "host": "172.17.0.1:5678",
+            "connection": "keep-alive"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "event": "messages.upsert",
+            "instance": "mens-apparel",
+            "data": {
+              "key": {
+                "remoteJid": "233245981856@s.whatsapp.net",
+                "remoteJidAlt": "233245981856@s.whatsapp.net",
+                "fromMe": false,
+                "id": "AC23BA96FF78E2C3818DE523F5751BF4",
+                "participant": "",
+                "addressingMode": "lid"
+              },
+              "pushName": "Sammy",
+              "status": "DELIVERY_ACK",
+              "message": {
+                "conversation": "How can I place an order?",
+                "messageContextInfo": {
+                  "threadId": [],
+                  "deviceListMetadata": {
+                    "senderKeyIndexes": [],
+                    "recipientKeyIndexes": [],
+                    "senderKeyHash": {
+                      "0": 83,
+                      "1": 90,
+                      "2": 35,
+                      "3": 169,
+                      "4": 153,
+                      "5": 248,
+                      "6": 142,
+                      "7": 53,
+                      "8": 29,
+                      "9": 115
+                    },
+                    "senderTimestamp": {
+                      "low": 1774522117,
+                      "high": 0,
+                      "unsigned": true
+                    },
+                    "recipientKeyHash": {
+                      "0": 222,
+                      "1": 122,
+                      "2": 206,
+                      "3": 78,
+                      "4": 132,
+                      "5": 138,
+                      "6": 82,
+                      "7": 10,
+                      "8": 222,
+                      "9": 171
+                    },
+                    "recipientTimestamp": {
+                      "low": 1773916259,
+                      "high": 0,
+                      "unsigned": true
+                    }
+                  },
+                  "deviceListMetadataVersion": 2,
+                  "messageSecret": {
+                    "0": 186,
+                    "1": 101,
+                    "2": 233,
+                    "3": 52,
+                    "4": 237,
+                    "5": 198,
+                    "6": 15,
+                    "7": 8,
+                    "8": 40,
+                    "9": 168,
+                    "10": 31,
+                    "11": 177,
+                    "12": 170,
+                    "13": 35,
+                    "14": 211,
+                    "15": 119,
+                    "16": 101,
+                    "17": 139,
+                    "18": 155,
+                    "19": 210,
+                    "20": 15,
+                    "21": 33,
+                    "22": 99,
+                    "23": 245,
+                    "24": 96,
+                    "25": 66,
+                    "26": 192,
+                    "27": 32,
+                    "28": 184,
+                    "29": 61,
+                    "30": 44,
+                    "31": 6
+                  }
+                }
+              },
+              "messageType": "conversation",
+              "messageTimestamp": 1774556429,
+              "instanceId": "2cf7d324-ff0c-44a3-88e2-2f5369398524",
+              "source": "android"
+            },
+            "destination": "http://172.17.0.1:5678/webhook/whatsapp",
+            "date_time": "2026-03-26T20:20:30.004Z",
+            "sender": "233209123895@s.whatsapp.net",
+            "server_url": "http://localhost:8181",
+            "apikey": "C23B4920-6E5B-4FA2-9311-4349C6F8E4B0"
+          },
+          "webhookUrl": "http://localhost:5678/webhook/whatsapp",
+          "executionMode": "production"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Filter: Incoming Only",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter: Incoming Only": {
+      "main": [
+        [],
+        [
+          {
+            "node": "extract_fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "lookup lead": {
+      "main": [
+        [
+          {
+            "node": "new or returning lead",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "new or returning lead": {
+      "main": [
+        [
+          {
+            "node": "create new lead",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "create new lead": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "extract_fields": {
+      "main": [
+        [
+          {
+            "node": "lookup lead",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "reply customer": {
+      "main": [
+        []
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        []
+      ]
+    },
+    "OpenAI": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "messageSheet": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "leadSheet_tool": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "update_lead": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "bc116b07-fa5d-4688-a50c-b221d34633de",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "1de267c5b216e1fe48421e56c3cd3dc216f352e97f16b6d8838d11a8baddf4ad"
+  },
+  "id": "af2pQyXdvWmIvB9m",
+  "tags": []
+}
